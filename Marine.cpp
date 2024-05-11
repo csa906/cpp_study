@@ -17,7 +17,7 @@ class Marine {
         Marine(int x, int y, const char* marine_name); // 이름까지 지정하는 생성자
         ~Marine(); // 소멸자   
 
-        int attack(); // 데미지를 리턴한다.
+        int attack() const; // 데미지를 리턴한다.
         // void be_attacked(int damage_earn); // 입는 데미지
         void move(int x, int y); // 새로운 위치
 
@@ -77,7 +77,7 @@ Marine::~Marine() {
     total_marine_num--;
 }
 
-int Marine::attack() {
+int Marine::attack() const {
     return damage;
 }
 

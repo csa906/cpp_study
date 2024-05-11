@@ -84,7 +84,7 @@ int string::strlen() {
 
 int main() {
     string a('a', 5);
-    string b("hello");
+    string b("hello"); 
     string c = b;
 
     a.print_string();
