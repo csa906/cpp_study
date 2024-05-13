@@ -26,6 +26,8 @@ class MyString {
         MyString& insert(int loc, const MyString& str); // 문자열 삽입
         MyString& insert(int loc, const char* str); // 문자열 삽입
         MyString& insert(int loc, char c); // 문자 삽입
+
+        MyString& erase(int loc, int num);
 };
 
 MyString::MyString(char c) {
@@ -125,7 +127,12 @@ MyString& MyString::insert(int loc, const MyString& str) {
     }
 
     if (string_length + str.string_length > memory_capacity) {
-        memory_capacity = string_length + str.string_length;
+        
+        if (memory_capacity * 2 > string_length + str.string_length)
+            memory_capacity *= 2;
+        else 
+            memory_capacity = string_length + str.string_length;
+
         char* prev_string_content = string_content;
         string_content = new char[memory_capacity];
     
@@ -163,4 +170,16 @@ MyString& MyString::insert(int loc, const char* str) {
 MyString& MyString::insert(int loc, char c) {
     MyString temp(c);
     return insert(loc, temp);
+}
+
+MyString& MyString::erase(int loc, int num) {
+    if (num < 0 || loc < 0 || loc > string_length) 
+        return *this;
+    else {
+        for (int i = loc + num; i < string_length; i++) {
+            string_content[i - num] = string_content[i];
+        }
+        string_length -= num;
+        return *this;
+    }
 }

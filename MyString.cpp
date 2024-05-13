@@ -14,5 +14,7 @@ int main() {
     str1.insert(1, "123");
     str1.print();
 
+    str1.erase(1, 2);
+    str1.print();
     return 0;
 }
