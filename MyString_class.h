@@ -1,6 +1,13 @@
 #include <iostream>
 #include <string.h>
+#include <vector>
 using namespace std;
+
+enum Size {
+    BIGGER = 1,
+    EQUAL = 0,
+    SMALLER = -1
+};
 
 class MyString {
     private:
@@ -28,7 +35,17 @@ class MyString {
         MyString& insert(int loc, char c); // 문자 삽입
 
         MyString& erase(int loc, int num);
+
+        int find(int find_from, MyString& str) const;
+        int find(int find_from, const char* str) const;
+        int find(int find_from, char c) const;
+        
+        int compare(const MyString& str) const;
+
+        vector<int> makeTable() const;
+        void KMP(MyString& parent) const;
 };
+
 
 MyString::MyString(char c) {
     string_length = 1;
@@ -173,7 +190,7 @@ MyString& MyString::insert(int loc, char c) {
 }
 
 MyString& MyString::erase(int loc, int num) {
-    if (num < 0 || loc < 0 || loc > string_length) 
+    if (num < 0 || loc < 0 || loc > string_length || num > string_length) 
         return *this;
     else {
         for (int i = loc + num; i < string_length; i++) {
@@ -181,5 +198,81 @@ MyString& MyString::erase(int loc, int num) {
         }
         string_length -= num;
         return *this;
+    }
+}
+
+int MyString::find(int find_from, MyString& str) const {
+    int i, j;
+    if (str.string_length == 0) 
+        return -1;
+    
+    for(i = find_from; i <= string_length - str.string_length; i++) {
+        for (j = 0; j < str.string_length; j++) {
+            if (string_content[i + j] != str.string_content[j]) 
+                break;
+        }
+        if (j == str.string_length)
+            return i;
+    }
+    return -1;
+}
+
+int MyString::find(int find_from, const char* str) const {
+    MyString temp(str);
+    return find(find_from, temp);
+}
+
+int MyString::find(int find_from, char c) const {
+    MyString temp(c);
+    return find(find_from, temp);
+}
+
+int MyString::compare(const MyString& str) const {
+    for (int i = 0; i < std::min(string_length, str.string_length); i++) {
+        if (string_content[i] > str.string_content[i])
+            return BIGGER;
+        else if(string_content[i] < str.string_content[i])
+            return SMALLER;
+    }
+    if (string_length == str.string_length)
+        return EQUAL;
+    else if (string_length > str.string_length)
+        return BIGGER;
+    else
+        return SMALLER;
+}
+
+vector<int> MyString::makeTable() const {
+    int patternSize = length();
+    vector<int> table(patternSize, 0);
+    int j = 0;
+    for (int i = 1; i < patternSize; i++) {
+        while (j > 0 && string_content[i] != string_content[j]) {
+            j = table[j - 1];
+        }
+        if(string_content[i] == string_content[j]) 
+            table[i] = ++j;
+    }
+    return table;
+}
+
+void MyString::KMP(MyString& pattern) const {
+    vector<int> table = pattern.makeTable();
+    int parentSize = string_length;
+    int patternSize = pattern.string_length;
+    int j = 0;
+    for(int i = 0; i < parentSize; i++) {
+        while(j > 0 && string_content[i] != pattern.string_content[j]) {
+            j = table[j - 1];
+        }
+        if(string_content[i] == pattern.string_content[j]) {
+            if(j == patternSize - 1) {
+                cout << i - patternSize + 1 << "번 째에서 찾았습니다." << endl;
+                j = table[j];
+            }
+            else {
+                j++;
+            } 
+        }
     }
 }
