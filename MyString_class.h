@@ -16,6 +16,7 @@ class MyString {
         int memory_capacity;
     
     public:
+        explicit MyString(int capacity); // capacity 만큼 할당
         MyString(char c); // 문자 하나로 생성
         MyString(const char *str); // 문자열로 생성
         MyString(const MyString& str); // 복사 생성자
@@ -44,8 +45,14 @@ class MyString {
 
         vector<int> makeTable() const;
         void KMP(MyString& parent) const;
+        bool operator==(MyString& str);
 };
 
+MyString::MyString(int capacity) {
+    string_content = new char[capacity];
+    string_length = 0;
+    memory_capacity = capacity;
+}
 
 MyString::MyString(char c) {
     string_length = 1;
@@ -275,4 +282,8 @@ void MyString::KMP(MyString& pattern) const {
             } 
         }
     }
+}
+
+bool MyString::operator==(MyString& str) {
+    return !compare(str);
 }
